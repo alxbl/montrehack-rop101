@@ -6,7 +6,29 @@ def q(addr): return pack('<Q', addr)
 print "=== ROP/01: Solution ===\n"
 """
 Explanation:
-    TODO
+    This is a classical stack smash, but there's no gadget to jump to the stack.
+    Even if there was, the stack is marked as not executable (NX) so it would be
+    impossible to execute the shellcode.
+
+    Luckily, the entire binary is statically linked, so LIBC's `system()` is
+    present. It's a good idea to smash the stack and inspect the registers at
+    the moment where control over RIP is gained.
+
+    It looks like rdi (argument 1 in X64) is pointing to the stack! It so
+    happens that `system()` takes a shell command as its first argument.
+
+    By setting the return address to system, and putting our reverse shell
+    command at rdi, it's possible to run a command.
+
+    The only little catch here is that rdi points 1 byte after rsp, so an extra
+    character must be used to pad the payload.
+
+           STACK
+        | ret_addr | <- set to the address of glibc's `system()`
+        | AAAAAAAA | <- rbp was trashed by our smash, but that's okay.
+        | AAAAAAAA |
+        | sh ...   |
+        | A/bin/ba | <- RSP starts at 'A', but RDI points to '/bin/bash...'
 """
 
 REMOTE = False              # TARGET is ip:port
