@@ -2,26 +2,31 @@
 #include <stdio.h>
 #include <string.h>
 
+#define SIZE 0x100
+
 char motd[SIZE] = "> > > D-d-d-DROP the ROP! < < <";
 
 void clean_stdin()
 {
-    char c;
-    while ((c = getchar()) != '\n');
+    while (1)
+    {
+        char c = getchar();
+        if (c == '\n') break;
+        if (c == EOF) exit(1);
+    }
 }
 
 int getnum()
 {
-    int choice;
-    if (scanf("%d", &choice) == 1) return choice;
+    int choice = ~0;
+    scanf("%d", &choice);
     clean_stdin();
-    return ~0;
+    return choice;
 }
 
 void read_motd(char* motd) {
     printf("Type in the new message of the day please:\n> ");
     char buf[SIZE] = {0};
-    clean_stdin();
     gets(buf);
     memcpy(motd, buf, SIZE);
 }
@@ -51,8 +56,10 @@ void main()
                 puts(motd);
                 break;
             case 2:
+            {
                 read_motd(motd);
                 break;
+            }
             case 3:
                 done = 1;
                 break;
