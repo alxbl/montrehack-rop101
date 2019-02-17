@@ -87,6 +87,8 @@ void init(motd_t* motds)
 
 void main()
 {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdin, NULL, _IONBF, 0);
     motd_t motds[3];
     init(motds);
 

