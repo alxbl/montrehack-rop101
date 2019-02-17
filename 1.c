@@ -34,6 +34,8 @@ void read_motd(char* motd) {
 int done = 0;
 void main()
 {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    /* setvbuf(stdin, NULL, _IONBF, 0); */ // Breaks direct ret2libc
     printf("motd daemon v0.1 (c) 2019 BetterSoft\n");
     fflush(stdout);
     system("date"); // [bill] This is easier than manipulating time and makes our code cleaner.
