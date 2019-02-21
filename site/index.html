@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- Why u peekin? chals' in the bin yo. -->
+<html>
+	<body>
+		<h1>Montrehack 2019/02/20 - ROP 101: D-d-d-dROP the ROP!</h1>
+		<p>Slides: <a href="/slides_v1.pdf">download</a></p>
+		<p>The challenges are located at <b>ctf.segfault.me</b> on ports 3001, 3002 and 3003, respectively.</p>
+		<p>
+			The binaries can be found here:
+			<ol>
+				<li>Challenge 1 (Port 3001): <a href="/motd_v0.1">motd_v0.1</a> (<b>sha1sum:</b> 879b6763637e0617bd3eea61f3ac92ea0cb9a022)</li>
+				<li>Challenge 2 (Port 3002): <a href="/motd_v0.2">motd_v0.2</a> (<b>sha1sum:</b> e51c93da7cc340996798397261de9c2b15edeea1)</li>
+				<li>Challenge 3 (Port 3003): <a href="/motd_v0.3">motd_v0.3</a> (<b>sha1sum:</b> a133a1156f27ddc49015edc14627fdddad36898d)</li>
+			</ol>
+			Your flags can be validated <a href="http://ctf.segfault.me/submit.php">here</a> 
+		</p>
+
+		<h2>Bonus Challenges: ARM ROPs</h2>
+		<p>Credit: <a href="https://twitter.com/xshill_" target="_blank">@xshill</a>
+		<p>Details and Binaries:<a href="http://sploitbox.com/arm.php" target="_blank">here</a>
+		<p>The challenges are located at <b>sploitbox.com</b> on ports 3001 and 3002.</p>
+
+		<h2>Resources</h2>
+		<p>Feel free to use these to help you during the challenges!</p>
+		<ul>
+			<li><a href="http://www.felixcloutier.com/x86/" target="_blank">x86-64 Instruction Set</a></li>
+			<li><a href="https://developer.arm.com/docs/100076/latest/part-c-a32t32-instruction-set-reference" target="_blank">ARM Instruction Set</a></li>
+			<li><a href="https://github.com/pwndbg/pwndbg/tree/dev/pwndbg" target="_blank">pwndbg</a></li>
+			<li><a href="http://docs.pwntools.com/en/stable/index.html" target="_blank">pwntools</a></li>
+			<li><a href="https://github.com/JonathanSalwan/ROPgadget" target="_blank">ROPGadget</a></li>
+			<li><a href="https://radare.gitbooks.io/radare2book/content/" target="_blank">Radare2</a></li>
+		</ul>
+
+<h2>Cheatsheet</h2>
+<code>
+<pre>
+#### bash
+$ ROPGadget --binary /bin/ls # Find all gadgets in `ls`
+
+
+### radare2 reversing
+$ r2 chal
+[0x0000] aaa       # Analyze all
+[0x0000] s main    # Seek to symbol `main`
+[0x0000] VV        # Visual graph mode of function (q to quit)
+[0x0000] V         # Visual disassembly mode (p, P to cycle between modes, q to quit)
+# At any time: vim bindings (hjkl) to move around
+
+
+#### gdb
+break *0xdeadb33f   # Set a breakpoint at address
+break fopen         # Set a breakpoint at symbol name
+continue            # Continue execution until end/next breakpoint
+finish              # Continue execution until `ret`
+s                   # Step one instruction
+x/10i $rip          # Disassemble 10 instructions at memory pointed by $rip
+x/10a $rsp          # Print 10 addresses at  memory pointed by $rsp
+
+
+#### pwn tools getting started template.
+# go.py
+
+from pwn import *
+# Run a local binary
+p = process('./chal')
+
+# Debug a local binary (might need to be in tmux or screen)
+p = gdb.debug('./chal', '''
+	set follow-fork-mode parent
+	set follow-exec-mode child
+	continue
+	# More GDB commands here
+''')
+
+# Connect remotely
+p = remote('ctf.segfault.me', 3001)
+
+
+### These commands work on all types of p.
+# Send a command with a trailing new line
+p.sendline("command")
+
+# Send a command (no new line)
+p.send("command")
+
+# Receive 1024 bytes
+p.recv(1024)
+# Receive until specified text
+p.recvuntil(":")
+
+# Receive until end
+p.readall()
+
+# Drop into an interactive session
+p.interactive()
+</pre>
+</code>
+
+	</body>
+</html>

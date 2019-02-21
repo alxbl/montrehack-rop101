@@ -1,0 +1,3 @@
+# FLAG-{Not_the_one_you_are_looking_for}
+User-agent: *
+disallow: /topsecret
