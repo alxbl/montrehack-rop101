@@ -3,6 +3,11 @@
 This repository contains the source code, binaries and solutions to the
 Montrehack workshop held on February 20th, 2019.
 
+The workshop was live streamed and you can find my [presentation of the
+slides][1] as well my [walk through of solutions 1 and 2][2] on Twitch.
+
+[1]: https://www.twitch.tv/videos/384854978
+[2]: https://www.twitch.tv/videos/384854977
 
 ## Running
 
