@@ -33,20 +33,24 @@ Explanation:
         6. The gadget returns to `main`'s system call
         7. system(rdi) is called and executes motd 1
 
-        STACK
-        | -- main ----- |
-        | ret_addr      |
-        | old_rbp       |
-        | motd_3_ptr    |
-        | motd_3_rating |
-        | motd_2_ptr    |
-        | motd_2_rating |
-        | motd_1_ptr    |
-        | system_addr   |
-        | -- rate ----- |
-        | gadget_addr   | <--- used to be ret_addr to main.
-        | old_rbp       |
-        | ...           |
+        < 0xfffffffffff >
+        |     . . .     |
+        |== main =======|
+        |  return_addr  |
+        |  old rbp      |
+        |---------------|
+        | motd[2]->rate |
+        | motd[2]->text |
+        | motd[1]->rate |
+        | motd[1]->text |
+        | motd[0]->rate | (+8) => &system
+        | motd[0]->text | (+0) => Pointer to system() argument
+        |== get_motd ===|
+        | return_addr   | <-- motd[-1]->rate => pop rdi; ret
+        | old rbp       | <-- motd[-1]->text
+        |---------------|`
+        |     . . .     |
+        < 0x00000000000 >
 """
 
 REMOTE = ('ctf.segfault.me', 3002)
